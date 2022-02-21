@@ -19,13 +19,7 @@ import numcodecs
     help="The length of the simulated chromosome in megabases",
 )
 @click.option("-p", "--power", is_flag=True, help="Sample size value is 10^n")
-@click.option(
-    "-r", 
-    "--sim_rate", 
-    type=float,
-    default=1e-8, 
-    help="sim_mutation rate"
-)
+@click.option("-r", "--sim_rate", type=float, default=1e-8, help="sim_mutation rate")
 def generate_trees(sample_size, outfile, sequence_length, power, sim_rate):
     """
     Simulates the trees and mutations for the specified diploid sample size.
