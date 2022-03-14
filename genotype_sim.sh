@@ -35,14 +35,17 @@ out_dir=output
 mkdir -p $out_dir
 
 out=$out_dir/chr${chr_num}_${sample_size}_rate_${rate}
+
 if [ -f $out ]; then
   echo "File $out exists, skipping"
 else
   python simulator.py generate-trees -L ${chr[$chr_num]} -r $rate $sample_size $out
 fi
+
 if [ -f $out.vcf.gz ]; then
-echo "File $out.vcf.gz exists, skipping"
+  echo "File $out.vcf.gz exists, skipping"
 else
   python simulator.py trees-to-vcf $out $out.vcf --contig-id $chr_num
-  gzip -f $out.vcf
+  bgzip -f $out.vcf
+  tabix -f $out.vcf.gz
 fi
