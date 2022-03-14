@@ -24,24 +24,25 @@ chr[21]=47
 chr[22]=51
 
 length=${#chr[@]}
-echo "Bash array '\${chr}' has total ${length} element(s) (length)"
 
-sample_size=1000
-rate=1e-9
+sample_size=${1:-100}
+rate=${2:-1e-9}
+chr_num=${3:-20}
 
-for (( j=20; j<=length; j++ ));
-do
-  printf "chr %d length %s Mb\n" $j "${chr[$j]}"
-  out=chr${j}_${sample_size}_rate_${rate}
-  if [ -f $out ]; then
-	echo "File $out exists, skipping"
-  else
-  	python simulator.py generate-trees -L ${chr[$j]} -r 1e-9 $sample_size $out
-  fi
-   if [ -f $out.vcf.gz ]; then
-	echo "File $out.vcf.gz exists, skipping"
-  else
-  	python simulator.py trees-to-vcf $out $out.vcf --contig-id $j
-  	gzip -f $out.vcf
-  fi
-done
+echo $sample_size $rate $chr_num ${chr[$chr_num]}Mb
+
+out_dir=output
+mkdir -p $out_dir
+
+out=$out_dir/chr${chr_num}_${sample_size}_rate_${rate}
+if [ -f $out ]; then
+  echo "File $out exists, skipping"
+else
+  python simulator.py generate-trees -L ${chr[$chr_num]} -r $rate $sample_size $out
+fi
+if [ -f $out.vcf.gz ]; then
+echo "File $out.vcf.gz exists, skipping"
+else
+  python simulator.py trees-to-vcf $out $out.vcf --contig-id $chr_num
+  gzip -f $out.vcf
+fi
